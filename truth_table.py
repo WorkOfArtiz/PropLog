@@ -9,10 +9,11 @@ import pandas as pd
 def df2md(df):
     output = []
 
-    output.append(' | '.join(df.columns.values))
-    output.append(' | '.join("-"*len(l) for l in df.columns.values))
+    lengths = [max(len(s), 3) for s in df.columns]
+    form    = ["%%%ds" % l for l in lengths]
 
-    form = ["%%%ds" % len(l) for l in df.columns.values]
+    output.append(' | '.join(f % s for f,s in zip(form, df.columns.values)))
+    output.append(' | '.join("-" * l for l in lengths))
 
     for index, row in df.iterrows():
         output.append(' | '.join(f % r for f,r in zip(form, row)))
@@ -49,5 +50,5 @@ def truth_table(expr):
 if __name__ == '__main__':
     expr  = parse(r'(A -> A) implies not (B * ((((~A))))) && (A -> A)')
     table = truth_table(expr)
-    print table.to_html(index=False)
+    print df2md(table)
     #print table.to_latex(index=False) #df2md(table)

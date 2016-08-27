@@ -31,17 +31,17 @@ parse(r'(A -> A) implies not (B * ((((~A))))) && (A -> A)')
 
 ### Truth table script
 
-A | B | (A -> A) | ~A | (B ^ ~A) | ~((B ^ ~A)) | ((A -> A) -> ~((B ^ ~A))) | (((A -> A) -> ~((B ^ ~A))) ^ (A -> A))
-- | - | -------- | -- | -------- | ----------- | ------------------------- | --------------------------------------
-0 | 0 |        1 |  1 |        0 |           1 |                         1 |                                      1
-1 | 0 |        1 |  0 |        0 |           1 |                         1 |                                      1
-0 | 1 |        1 |  1 |        1 |           0 |                         0 |                                      0
-1 | 1 |        1 |  0 |        0 |           1 |                         1 |                                      1
+  A |   B | (A -> A) |  ~A | (B ^ ~A) | ~((B ^ ~A)) | ((A -> A) -> ~((B ^ ~A))) | (((A -> A) -> ~((B ^ ~A))) ^ (A -> A))
+--- | --- | -------- | --- | -------- | ----------- | ------------------------- | --------------------------------------
+  0 |   0 |        1 |   1 |        0 |           1 |                         1 |                                      1
+  1 |   0 |        1 |   0 |        0 |           1 |                         1 |                                      1
+  0 |   1 |        1 |   1 |        1 |           0 |                         0 |                                      0
+  1 |   1 |        1 |   0 |        0 |           1 |                         1 |                                      1
 
 **CODE:**
 
     table = truth_table(expr)
-    print df2md(table)     # for markdown (home made function)
+    print df2md(table)     # for markdown (home made function in truth_table.py)
     print table.to_latex() # for TeX
     print table.to_html()  # for HTML
     etc.
