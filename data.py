@@ -173,9 +173,7 @@ class Not(LogicExpression):
         return "~%s" % self._expr.__repr__()
 
     def __str__(self):
-        if isinstance(self._expr, (Var, Constant, Not)):
-            return "~%s" % str(self._expr)
-        return "~(%s)" % str(self._expr)
+        return "~%s" % str(self._expr)
 
     def calc(self, boolean_map):
         return not self._expr.calc(boolean_map)
