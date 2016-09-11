@@ -59,8 +59,8 @@ class And(LogicExpression):
         self._left, self._right = l, r
 
     def __str__(self):
-        l = str(self._left)[1:-1] if self.same_type(self._left) else str(self._left)
-        r = str(self._right)[1:-1] if self.same_type(self._right) else str(self._right)
+        l = str(self._left)
+        r = str(self._right)
         return "(%s %s %s)" % (l, And.out_symbol, r)
 
     def __repr__(self):
@@ -95,8 +95,8 @@ class Or(LogicExpression):
         self._left, self._right = l, r
 
     def __str__(self):
-        l = str(self._left)[1:-1] if self.same_type(self._left) else str(self._left)
-        r = str(self._right)[1:-1] if self.same_type(self._right) else str(self._right)
+        l = str(self._left)
+        r = str(self._right)
         return "(%s %s %s)" % (l, Or.out_symbol, r)
 
     def __repr__(self):
@@ -131,8 +131,8 @@ class Implies(LogicExpression):
         self._left, self._right = l, r
 
     def __str__(self):
-        l = str(self._left)[1:-1] if self.same_type(self._left) else str(self._left)
-        r = str(self._right)[1:-1] if self.same_type(self._right) else str(self._right)
+        l = str(self._left)
+        r = str(self._right)
         return "(%s %s %s)" % (l, Implies.out_symbol, r)
 
     def __repr__(self):
