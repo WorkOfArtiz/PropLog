@@ -161,6 +161,43 @@ class Implies(LogicExpression):
         yield self._right
 
 
+class Bi_Implication(LogicExpression):
+    class_name = 'bi_implication'
+    symbols = ('bi_implication', '<->', '<=>')
+    out_symbol = '<->'
+
+    def __init__(self, l, r):
+        self._left, self._right = l, r
+
+    def __str__(self):
+        l = str(self._left)
+        r = str(self._right)
+        return "(%s %s %s)" % (l, Bi_Implication.out_symbol, r)
+
+    def __repr__(self):
+        return "BiImplication(%s, %s)" % (self._left.__repr__(), self._right.__repr__())
+
+    def calc(self, boolean_map):
+        return Implies(self._left, self._right).calc(boolean_map) and Implies(self._right, self._left).calc(boolean_map)
+
+    def expressions(self):
+        e = self._left.expressions()
+        e.add(self)
+        e.update(self._right.expressions())
+        return e
+
+    def depth(self):
+        return max(self._left.depth(), self._right.depth()) + 1
+
+    def variables(self):
+        return self._left.variables().union(self._right.variables())
+
+    def children(self):
+        yield self._left
+        yield self._right
+
+
+
 class Not(LogicExpression):
     class_name = 'not'
     symbols = ('not', '~', '¬', '!')
@@ -229,7 +266,7 @@ class Constant(LogicExpression):
     true_symbols = ('true', '1')
     false_symbols = ('false', '0')
     symbols = ('true', '1', 'false', '0')
-    out_symbols = ('0', '1')
+    _out_symbols = ('0', '1')
     class_name = 'const'
 
     def __init__(self, value):
@@ -239,7 +276,7 @@ class Constant(LogicExpression):
         return "{True}" if self.value else "{False}"
 
     def __str__(self):
-        return Constant.out_symbols[self.value]
+        return Constant._out_symbols[self.value]
 
     def calc(self, boolean_map):
         return self.value
@@ -259,7 +296,7 @@ class Constant(LogicExpression):
 
 
 # The infix classes, prefix classes etc.
-infix_classes = [And, Or, Implies]
+infix_classes = [Bi_Implication, And, Or, Implies]
 prefix_classes = [Not]
 
 # These are some meta data structures, to quickly lookup:

@@ -3,7 +3,7 @@
 #
 # Parser that deals with the most ridiculous expressions
 from pyparsing import *
-from data import create_var_const, create_expression, And, Or, Implies, prefix_operators
+from data import create_var_const, create_expression, And, Or, Implies, Bi_Implication, prefix_operators
 
 __bnf = None
 
@@ -17,11 +17,12 @@ def _bnf():
     # and_expr    := prefix_expr  [ and_symbols prefix_expr ]*
     #  or_expr    := and_expr     [  or_symbols    and_expr ]*
     # expression  := or_expr      [impl_symbols     or_expr ]*
-    expression  = Forward()
-    and_symbol  = oneOf(And.symbols, caseless=True)
-    or_symbol   = oneOf(Or.symbols, caseless=True)
-    impl_symbol = oneOf(Implies.symbols, caseless=True)
-    prefix_op   = oneOf(prefix_operators, caseless=True)
+    expression   = Forward()
+    and_symbol   = oneOf(And.symbols, caseless=True)
+    or_symbol    = oneOf(Or.symbols, caseless=True)
+    impl_symbol  = oneOf(Implies.symbols, caseless=True)
+    bimpl_symbol = oneOf(Bi_Implication.symbols, caseless=True)
+    prefix_op    = oneOf(prefix_operators, caseless=True)
 
     varconst = Word(alphas + '_').setParseAction(lambda t: create_var_const(t[0]))
     nest     = Suppress('(') + expression + Suppress(')')
@@ -29,7 +30,7 @@ def _bnf():
     prefix_expr = (ZeroOrMore(prefix_op) + atom).setParseAction(parse_prefix_op)
     and_expr = (prefix_expr + ZeroOrMore(and_symbol + prefix_expr)).setParseAction(parse_infix_op)
     or_expr  = (and_expr + ZeroOrMore(or_symbol + and_expr)).setParseAction(parse_infix_op)
-    expression << (or_expr + ZeroOrMore(impl_symbol + or_expr)).setParseAction(parse_infix_op)
+    expression << (or_expr + ZeroOrMore((impl_symbol|bimpl_symbol) + or_expr)).setParseAction(parse_infix_op)
     __bnf = expression
     return __bnf
 
@@ -58,9 +59,11 @@ if __name__ == '__main__':
     throw_money_in_machine implies candy_rolls_out
     (a implies a) implies (a or ¬ b ^ c)
     ! ~ not ~ ! True
+    p <-> q
     """.strip().split('\n')
 
     for expr_in in test_cases:
         print "input :%s" % expr_in
         expr_out = parse(expr_in)
+        print "representation: %s" % (repr(expr_out))
         print "output:%s" % str(expr_out)

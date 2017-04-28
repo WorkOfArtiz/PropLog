@@ -19,10 +19,8 @@ def df2md(df):
         output.append(' | '.join(f % r for f,r in zip(form, row)))
     return '\n'.join(output)
 
-
 def truth_table(expr):
     variables = sorted(expr.variables())
-
 
     # We want the easiest expressions first, also True/False are not interesting
     sub_expr  = [(s.depth(),str(s), s) for s in expr.expressions() if not isinstance(s, Constant)]
@@ -48,7 +46,19 @@ def truth_table(expr):
     return pd.DataFrame(zip(*res), columns=sub_labl)
 
 if __name__ == '__main__':
-    expr  = parse(r'(A -> A) implies not (B * ((((~A))))) && (A -> A)')
+    from argparse import ArgumentParser
+    PARSER = ArgumentParser(description='truth table maker')
+    PARSER.add_argument("-o", "--output", choices=["md", "latex", "html"], default="md")
+    PARSER.add_argument("statement", type=str)
+    ARGS = PARSER.parse_args()
+
+    expr  = parse(ARGS.statement)
+    #expr  = parse(r'(A -> A) implies not (B * ((((~A))))) && (A -> A)')
     table = truth_table(expr)
-    print df2md(table)
-    #print table.to_latex(index=False) #df2md(table)
+
+    if ARGS.output == 'md':
+        print df2md(table)
+    elif ARGS.output == 'latex':
+        print table.to_latex(index=False)
+    else:
+        print table.to_html(index=False)
